@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -33,11 +34,18 @@ public class MainActivity extends AppCompatActivity {
         resultTextView = findViewById(R.id.resultTextView);
     }
     public void getWeather(View view){
+        try {
+            DownloadTask task = new DownloadTask();
+            String encodedCityName = URLEncoder.encode(editText.getText().toString(), "UTF-8");
 
-        DownloadTask task = new DownloadTask();
-        task.execute("https://openweathermap.org/data/2.5/weather?q="+ editText.getText().toString()+"&appid=b6907d289e10d714a6e88b30761fae22");
-        InputMethodManager mgr = (InputMethodManager)getSystemService(Context. INPUT_METHOD_SERVICE);
-        mgr.hideSoftInputFromWindow(editText.getWindowToken(),0);
+            task.execute("https://openweathermap.org/data/2.5/weather?q=" + encodedCityName + "&appid=b6907d289e10d714a6e88b30761fae22");
+            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Could not find weather:", Toast.LENGTH_SHORT).show();
+        }
     }
     public class DownloadTask extends AsyncTask<String, Void, String>{
         @Override
@@ -62,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
             }catch(Exception e){
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Could not find weather:", Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(), "Could not find weather:", Toast.LENGTH_SHORT).show();
                 return null;
             }
         }
@@ -92,11 +100,11 @@ public class MainActivity extends AppCompatActivity {
                 if (!message.equals("")){
                     resultTextView.setText(message);
                 }else{
-                    Toast.makeText(getApplicationContext(), "Could not find weather:", Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(), "Could not find weather:", Toast.LENGTH_SHORT).show();
                 }
             }catch(Exception e){
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Could not find weather:", Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(), "Could not find weather:", Toast.LENGTH_SHORT).show();
             }
 
         }
